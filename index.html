@@ -1,79 +1,42 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset=utf-8>
-	    <title>Three.js Tutorial</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/threejs/r84/three.min.js"></script>	    
 
-	    <style>
-		    body { margin: 0; }
-		    canvas { width: 100%; height: 100% }
-		</style>
-   </head>
+<head>
+    <meta charset=utf-8>
+    <title>Three.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/threejs/r84/three.min.js"></script> -->
+    <script type="module" src="./app.js"></script>
 
-    <body>
-        <div style="position: absolute; top: 20px; left: 60px">
-            <h1 id="title" style="color:red">Hello Maddy</h1>
-            <h3 class="words" style="color:blue">The world has changed</h3>
-            <h3 class="words" style="color:blue">And now we are cavemen</h3>
-            <h3 class="words" style="color:blue">Of the virtual age</h3>
+    <style>
+        body {
+            margin: 0;
+        }
 
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
 
-        </div>
-        <script>
-            var title = document.getElementById("title")
-            var words = [...document.getElementsByClassName("words")]
-            var ticker = true
+<body>
+    <script type="module">
+        import { App } from './app.js';
 
-            function repeatingFunc() {
-                setTimeout(repeatingFunc, 500);
-                ticker = !ticker
-                ticker ? title.style.color = "black" : title.style.color = "red"
-                words.forEach(word => ticker ? word.style.color = "black" : word.style.color = "blue" ) 
-            }
+        document.addEventListener("DOMContentLoaded", function () {
+            const app = new App();
+            window.app = app;
+        });
+    </script>
 
-            setTimeout(repeatingFunc, 500);
+    <div style="position: absolute; top: 20px; left: 60px">
+        <h1 id="title" style="color:red">Hello Maddy</h1>
+        <h3 class="words" style="color:blue">The world has changed</h3>
+        <h3 class="words" style="color:blue">And now we are cavemen</h3>
+        <h3 class="words" style="color:blue">Of the virtual age</h3>
+    </div>
 
-            var scene = new THREE.Scene();
-            var camera = new THREE.PerspectiveCamera( 40,( window.innerWidth)/(window.innerHeight), 0.1, 1000 );
-            
-            var renderer = new THREE.WebGLRenderer();
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            document.body.appendChild( renderer.domElement );
-            
-            var light = new THREE.PointLight(0xffffff);
-            light.position.set(-100,200,100);
-            scene.add(light); 
-            
-            var light2 = new THREE.PointLight(0xffffdd);
-            light2.position.set(100,-2000,-100);
-            scene.add(light2); 
-            
-            var geometry = new THREE.BoxGeometry( 4,4,4 );
-            var material = new THREE.MeshNormalMaterial(); 
-            var cube = new THREE.Mesh( geometry, material );    
-            scene.add( cube );
+</body>
 
-            var sphereGeometry = new THREE.SphereGeometry(3, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
-            var sphereMaterial = new THREE.MeshNormalMaterial();
-            var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-            scene.add(sphere);
-            
-            camera.position.z = 30;
-            
-            var render = function () {
-                requestAnimationFrame( render );
-
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.01;
-                sphere.rotation.y += 0.01;
-
-                renderer.render(scene, camera);
-            };
-
-                render();
-            
-        </script> 
-
-        </body>
 </html>
