@@ -55,7 +55,8 @@ class App {
     }
 
     initScene() {
-        this.geometry = new THREE.BoxBufferGeometry(0.06, 0.06, 0.06);
+        // this.geometry = new THREE.BoxBufferGeometry(0.06, 0.06, 0.06);
+        this.sphereGeometry = new THREE.SphereGeometry(0.05, 8, 6, 0, Math.PI * 2, 0, Math.PI);
         this.meshes = [];
     }
 
@@ -66,9 +67,12 @@ class App {
         let controller;
 
         function onSelect() {
-            const material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF * Math.random() });
-            const mesh = new THREE.Mesh(self.geometry, material);
-            mesh.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
+            // const material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF * Math.random() });
+            var sphereMaterial = new THREE.MeshNormalMaterial();
+            // const mesh = new THREE.Mesh(self.geometry, material);
+            const mesh = new THREE.Mesh(self.sphereGeometry, sphereMaterial);
+
+            mesh.position.set(0, 0, -0.39).applyMatrix4(controller.matrixWorld);
             mesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
             self.scene.add(mesh);
             self.meshes.push(mesh);
@@ -91,7 +95,7 @@ class App {
 
     render() {
         this.stats.update();
-        this.meshes.forEach((mesh) => { mesh.rotateY(0.01); });
+        this.meshes.forEach((mesh) => { mesh.rotateY(0.01 * Math.random(), mesh.rotateZ(0.01 * Math.random())) });
         this.renderer.render(this.scene, this.camera);
     }
 
