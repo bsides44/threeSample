@@ -2,6 +2,8 @@ import * as THREE from './node_modules/three/src/Three.js';
 import { ARButton } from './ARButton.js';
 import { Stats } from './stats.module.js';
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+import { FBXLoader } from './node_modules/three/examples/jsm/loaders/FBXLoader.js';
+// let mixer;
 
 class App {
     constructor() {
@@ -50,13 +52,17 @@ class App {
 
         this.initScene();
         this.setupXR();
+        // this.animate();
 
         window.addEventListener('resize', this.resize.bind(this));
     }
 
     initScene() {
+        // cubes
         // this.geometry = new THREE.BoxBufferGeometry(0.06, 0.06, 0.06);
-        this.sphereGeometry = new THREE.SphereGeometry(0.05, 8, 6, 0, Math.PI * 2, 0, Math.PI);
+        // spheres
+        // this.sphereGeometry = new THREE.SphereGeometry(0.05, 8, 6, 0, Math.PI * 2, 0, Math.PI);
+
         this.meshes = [];
     }
 
@@ -67,24 +73,48 @@ class App {
         let controller;
 
         function onSelect() {
+            // cubes
             // const material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF * Math.random() });
-            var sphereMaterial = new THREE.MeshNormalMaterial();
             // const mesh = new THREE.Mesh(self.geometry, material);
-            const mesh = new THREE.Mesh(self.sphereGeometry, sphereMaterial);
+            // spheres
+            // var sphereMaterial = new THREE.MeshNormalMaterial();
+            // const mesh = new THREE.Mesh(self.sphereGeometry, sphereMaterial);
 
-            mesh.position.set(0, 0, -0.39).applyMatrix4(controller.matrixWorld);
-            mesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
-            self.scene.add(mesh);
-            self.meshes.push(mesh);
+            // mesh.position.set(0, 0, -0.39).applyMatrix4(controller.matrixWorld);
+            // mesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
+            // self.scene.add(mesh);
+            // self.meshes.push(mesh);
+
+            const loader = new FBXLoader()
+            loader.load('./boat.fbx', function (object) {
+
+                // mixer = new THREE.AnimationMixer(object);
+
+                // const action = mixer.clipAction(object.animations[0]);
+                // action.play();
+
+                object.traverse(function (child) {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                });
+
+                object.scale.set(0.0002, 0.0002, 0.0002)
+
+                object.position.set(0, 0, -0.2).applyMatrix4(controller.matrixWorld);
+                object.quaternion.setFromRotationMatrix(controller.matrixWorld);
+                self.scene.add(object);
+                self.meshes.push(object);
+            })
         }
 
         const btn = new ARButton(this.renderer)
-
         controller = this.renderer.xr.getController(0)  //the first touch of the screen
         controller.addEventListener('select', onSelect)
         this.scene.add(controller)
-
         this.renderer.setAnimationLoop(this.render.bind(this));
+
     }
 
     resize() {
@@ -93,9 +123,17 @@ class App {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    // animate() {
+    // requestAnimationFrame(animate);
+    // this.renderer.setAnimationLoop(this.render.bind(this));
+    // const delta = this.clock.getDelta();
+    // if (mixer) mixer.update(delta);
+    // }
+
     render() {
         this.stats.update();
-        this.meshes.forEach((mesh) => { mesh.rotateY(0.01 * Math.random(), mesh.rotateZ(0.01 * Math.random())) });
+        // this.meshes.forEach((mesh) => { mesh.rotateY(0.01 * Math.random(), mesh.rotateZ(0.01 * Math.random())) });
+        this.renderer.shadowMap.enabled = true;
         this.renderer.render(this.scene, this.camera);
     }
 
